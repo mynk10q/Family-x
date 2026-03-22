@@ -1,5 +1,3 @@
-import axios from "axios";
-
 export default async function handler(req, res) {
   try {
 
@@ -15,9 +13,9 @@ export default async function handler(req, res) {
     const url =
       `https://familyyyy-info.vercel.app/key-api?key=${key}&term=${term}`;
 
-    const response = await axios.get(url);
+    const r = await fetch(url);
 
-    const data = { ...response.data };
+    const data = await r.json();
 
     delete data.dev_credit;
     delete data.credit;
@@ -28,10 +26,13 @@ export default async function handler(req, res) {
       credit: "@mynk_mynk_mynk"
     });
 
-  } catch (err) {
+  } catch (e) {
+
     return res.status(500).json({
       status: false,
-      message: "API Down"
+      message: "API Down",
+      error: String(e)
     });
+
   }
 }
