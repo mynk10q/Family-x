@@ -1,4 +1,15 @@
 export default async function handler(req, res) {
+  
+  // 🔥 CORS headers (IMPORTANT)
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "*");
+
+  // 🔥 OPTIONS request handle (preflight)
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   try {
 
     const { term, key } = req.query;
@@ -14,9 +25,9 @@ export default async function handler(req, res) {
       `https://familyyyy-info.vercel.app/key-api?key=${key}&term=${term}`;
 
     const r = await fetch(url);
-
     const data = await r.json();
 
+    // 🔥 unwanted fields remove
     delete data.dev_credit;
     delete data.credit;
 
