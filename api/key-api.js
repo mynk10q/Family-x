@@ -14,28 +14,37 @@ export default async function handler(req, res) {
 
     const { term, key } = req.query;
 
-    if (!term || !key) {
-      return res.status(400).json({
+    // 🔥 Frontend key check
+    if (key !== "mynk") {
+      return res.status(403).json({
         status: false,
-        message: "Missing parameters"
+        message: "Invalid API Key"
       });
     }
 
-    // 🔥 Zephrex API
-    const url = `https://www.zephrexdigital.site/api?key=${key}&type=RATION&term=${term}`;
+    if (!term) {
+      return res.status(400).json({
+        status: false,
+        message: "Missing term"
+      });
+    }
+
+    // 🔐 Hidden real API key
+    const REAL_KEY = "ZEPH-9FHHY";
+
+    const url = `https://www.zephrexdigital.site/api?key=${REAL_KEY}&type=RATION&term=${term}`;
 
     const r = await fetch(url);
     const data = await r.json();
 
-    // 🔥 Remove unwanted fields safely
+    // 🔥 Clean unwanted fields
     if (data.dev_credit) delete data.dev_credit;
     if (data.credit) delete data.credit;
 
-    // 🔥 Replace branding everywhere
+    // 🔥 Replace branding
     if (data.BUY_API) data.BUY_API = "@mynk_mynk_mynk";
     if (data.SUPPORT) data.SUPPORT = "@mynk_mynk_mynk";
 
-    // 🔥 Final response
     return res.status(200).json({
       ...data,
       BUY_API: "@mynk_mynk_mynk",
