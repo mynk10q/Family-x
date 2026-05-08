@@ -29,28 +29,33 @@ export default async function handler(req, res) {
       });
     }
 
-    // 🔐 Hidden real API key
-    const REAL_KEY = "ZEPH-9FHHY";
-
-    const url = `https://www.zephrexdigital.site/api?key=${REAL_KEY}&type=RATION&term=${term}`;
+    // 🔥 New Backend API
+    const url = `https://atof.onrender.com/full-search?aadhaar=${term}`;
 
     const r = await fetch(url);
+
+    // 🔥 Check response
+    if (!r.ok) {
+      return res.status(500).json({
+        status: false,
+        message: "Backend API Failed"
+      });
+    }
+
     const data = await r.json();
 
-    // 🔥 Clean unwanted fields
-    if (data.dev_credit) delete data.dev_credit;
-    if (data.credit) delete data.credit;
+    // 🔥 Remove unwanted fields
+    delete data.dev_credit;
+    delete data.credit;
+    delete data.BUY_API;
+    delete data.SUPPORT;
 
-    // 🔥 Replace branding
-    if (data.BUY_API) data.BUY_API = "@mynk_mynk_mynk";
-    if (data.SUPPORT) data.SUPPORT = "@mynk_mynk_mynk";
-
+    // 🔥 Final clean response
     return res.status(200).json({
-      ...data,
+      status: true,
+      result: data,
       BUY_API: "@mynk_mynk_mynk",
-      SUPPORT: "@mynk_mynk_mynk",
-      dev_credit: "@mynk_mynk_mynk",
-      credit: "@mynk_mynk_mynk"
+      SUPPORT: "@mynk_mynk_mynk"
     });
 
   } catch (e) {
